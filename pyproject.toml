@@ -1,0 +1,43 @@
+[project]
+name = "memgraph"
+version = "0.1.0"
+description = "Graph RAG local memory system with short-term, episodic, and long-term tiers"
+requires-python = ">=3.11"
+dependencies = [
+    # Graph & storage
+    "networkx>=3.3",
+    "kuzu>=0.4",
+    "sqlite-utils>=3.36",
+    "lancedb>=0.8",
+
+    # Embeddings (local)
+    "sentence-transformers>=3.0",
+
+    # LLM client (OpenAI-compatible → LM Studio)
+    "openai>=1.30",
+
+    # CLI
+    "typer[all]>=0.12",
+    "rich>=13.7",
+    "textual>=0.60",
+
+    # LAN sync
+    "zeroconf>=0.132",
+    "grpcio>=1.64",
+    "grpcio-tools>=1.64",
+
+    # Entity extraction
+    "spacy>=3.7",
+
+    # Utils
+    "pydantic>=2.7",
+    "tomli>=2.0",
+    "uuid7>=0.1",
+]
+
+[project.scripts]
+mem = "memgraph.cli.main:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
