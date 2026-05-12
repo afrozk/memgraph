@@ -6,7 +6,7 @@ MemGraph is a local memory system for developers. It captures working context as
 
 ## The problem
 
-When you're deep in a project you hold a lot in your head: API contracts, integration quirks, environment decisions, half-debugged bugs. That context evaporates the moment you switch to something else. Standard approaches — Notion pages, README notes, Slack threads — are fine for documentation but terrible for retrieval. You can't ask "what broke the Foodics webhook last week?" and get a useful answer.
+When you're deep in a project you hold a lot in your head: API contracts, integration quirks, environment decisions, half-debugged bugs. That context evaporates the moment you switch to something else. Standard approaches — Notion pages, README notes, Slack threads — are fine for documentation but terrible for retrieval. You can't ask "what broke the lightspeed webhook last week?" and get a useful answer.
 
 MemGraph treats developer context the same way a graph database treats data: entities, relationships, timestamps, and confidence. Short-lived context (current session) is stored cheaply. Things worth keeping are promoted explicitly. Everything is queryable.
 
