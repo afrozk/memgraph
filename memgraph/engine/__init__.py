@@ -23,18 +23,26 @@ class LMStudioClient:
 
     def extract_entities(self, text: str) -> tuple[list[MemoryNode], list[MemoryEdge]]:
         """Ask the loaded LM Studio model to extract entities and relations."""
+        system_prompt = (
+            self.config.extract_system_prompt
+            + " Respond with raw JSON only — no markdown, no code fences."
+        )
         response = self.client.chat.completions.create(
             model=self.config.model,
             temperature=self.config.temperature,
             max_tokens=self.config.max_tokens,
             messages=[
-                {"role": "system", "content": self.config.extract_system_prompt},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": text},
             ],
-            response_format={"type": "json_object"},
         )
 
-        content = response.choices[0].message.content
+        content = response.choices[0].message.content.strip()
+        # Strip markdown code fences if the model wrapped the output
+        if content.startswith("```"):
+            content = content.split("```")[1]
+            if content.startswith("json"):
+                content = content[4:]
         try:
             data = json.loads(content)
         except json.JSONDecodeError:

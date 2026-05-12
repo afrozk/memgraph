@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
-from uuid7 import uuid7
+from uuid_extensions import uuid7
 
 
 def _now() -> datetime:

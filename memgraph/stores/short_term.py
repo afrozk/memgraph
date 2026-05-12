@@ -54,13 +54,16 @@ class ShortTermStore:
             return MemoryNode(**self.graph.nodes[node_id]["data"])
         return None
 
-    def find_by_label(self, label: str) -> list[MemoryNode]:
-        """Fuzzy find nodes by label (case-insensitive contains)."""
-        label_lower = label.lower()
+    def find_by_label(self, query: str) -> list[MemoryNode]:
+        """Find nodes matching any word in the query against label or properties."""
+        words = [w for w in query.lower().split() if len(w) > 2]
+        if not words:
+            return []
         results = []
         for nid, ndata in self.graph.nodes(data=True):
             node = MemoryNode(**ndata["data"])
-            if label_lower in node.label.lower():
+            haystack = node.label.lower() + " " + json.dumps(node.properties).lower()
+            if any(w in haystack for w in words):
                 results.append(node)
         return results
 

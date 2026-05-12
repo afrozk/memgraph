@@ -36,7 +36,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mem = "memgraph.cli.main:app"
+mem = "memgraph.main:app"
 
 [build-system]
 requires = ["hatchling"]

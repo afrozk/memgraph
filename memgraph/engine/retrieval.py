@@ -112,24 +112,32 @@ class RetrievalEngine:
 
     # --- Scoring heuristics ---
 
+    @staticmethod
+    def _word_match(query: str, text: str) -> float:
+        """Score based on how many query words appear in text (0.0–0.3)."""
+        words = [w for w in query.lower().split() if len(w) > 2]
+        if not words:
+            return 0.0
+        hits = sum(1 for w in words if w in text.lower())
+        return 0.3 * (hits / len(words))
+
     def _score_short_term(self, node: MemoryNode, query: str) -> float:
-        """Short-term gets recency boost but lower base."""
         base = 0.5
-        label_match = 0.3 if query.lower() in node.label.lower() else 0.0
+        haystack = node.label + " " + str(node.properties)
+        label_match = self._word_match(query, haystack)
         recency = self._recency_boost(node.created_at, hours=2)
         return min(1.0, base + label_match + recency * 0.2)
 
     def _score_episodic(self, episode: Episode, query: str) -> float:
-        """Episodic scored by text match and age."""
         base = 0.4
-        match = 0.3 if query.lower() in episode.summary.lower() else 0.0
+        match = self._word_match(query, episode.summary)
         recency = self._recency_boost(episode.created_at, hours=168)  # 1 week
         return min(1.0, base + match + recency * 0.2)
 
     def _score_long_term(self, node: MemoryNode, query: str) -> float:
-        """Long-term gets high base (trusted knowledge)."""
         base = 0.6
-        match = 0.3 if query.lower() in node.label.lower() else 0.0
+        haystack = node.label + " " + str(node.properties)
+        match = self._word_match(query, haystack)
         confidence = node.confidence * 0.1
         return min(1.0, base + match + confidence)
 

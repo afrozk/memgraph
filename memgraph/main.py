@@ -152,6 +152,7 @@ def add_memory(
     nodes, edges = llm.extract_entities(text)
 
     for n in nodes:
+        n.properties.setdefault("source_text", text)
         st.add_node(n)
     for e in edges:
         st.add_edge(e)
@@ -181,6 +182,7 @@ def save_memory(
         nodes, edges = llm.extract_entities(summary)
         for n in nodes:
             n.origin_machine = _machine_id()
+            n.properties.setdefault("source_text", summary)
             lt_store.add_node(n)
         for e in edges:
             lt_store.add_edge(e)

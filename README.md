@@ -27,7 +27,9 @@ Everything lives in `~/.memgraph/`. No API keys, no subscriptions, no data leavi
 ## Quick start
 
 ```bash
-# Install
+# Install (create a venv first)
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
 
 # Initialise
@@ -56,7 +58,7 @@ mem recall "payment provider"
 mem recall "RDS migration"
 
 # Ask a question with full context
-mem ask "What payment provider does myanotherapp app use?"
+mem ask "What payment provider does BrewMate app use?"
 
 # Check status
 mem status

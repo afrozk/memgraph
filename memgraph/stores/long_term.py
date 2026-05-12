@@ -22,7 +22,7 @@ class LongTermStore:
         import kuzu
 
         self.db_path = data_dir / "longterm" / "kuzu_db"
-        self.db_path.mkdir(parents=True, exist_ok=True)
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.db = kuzu.Database(str(self.db_path))
         self.conn = kuzu.Connection(self.db)
         self._ensure_schema()
@@ -111,22 +111,25 @@ class LongTermStore:
         return edge
 
     def search_nodes(self, query: str, limit: int = 10) -> list[MemoryNode]:
-        """Search nodes by label (contains, case-insensitive)."""
+        """Search nodes by matching query words against label and source_text."""
+        words = [w for w in query.lower().split() if len(w) > 2]
         result = self.conn.execute(
-            """
-            MATCH (n:memory_node)
-            WHERE n.label CONTAINS $q
-            RETURN n.*
-            ORDER BY n.updated_at DESC
-            LIMIT $lim
-            """,
-            parameters={"q": query, "lim": limit},
+            "MATCH (n:memory_node) RETURN n.* ORDER BY n.updated_at DESC LIMIT 500",
         )
-        nodes = []
+        all_nodes = []
         while result.has_next():
             row = result.get_next()
-            nodes.append(self._row_to_node(row, result.get_column_names()))
-        return nodes
+            all_nodes.append(self._row_to_node(row, result.get_column_names()))
+
+        if not words:
+            return all_nodes[:limit]
+
+        matched = []
+        for node in all_nodes:
+            haystack = (node.label + " " + str(node.properties)).lower()
+            if any(w in haystack for w in words):
+                matched.append(node)
+        return matched[:limit]
 
     def get_subgraph(self, node_id: str, depth: int = 2) -> tuple[list[MemoryNode], list[MemoryEdge]]:
         """Get a node and its neighborhood up to N hops."""
