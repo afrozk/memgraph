@@ -37,7 +37,7 @@ mem init
 mem status
 
 # Start a session
-mem session new recaf-api
+mem session new myapp-api
 
 # Add context (entities auto-extracted via LM Studio)
 mem add "BrewMate uses Afterpay for BNPL payments with Tyro as EFTPOS fallback"
@@ -48,7 +48,7 @@ mem save --longterm "BrewMate uses Afterpay for BNPL payments, Tyro as EFTPOS fa
 mem save --episodic "Tested Lightspeed webhook — needs retry with exponential backoff" -t "debug,lightspeed"
 
 # Switch to another project — short-term is persisted automatically
-mem session switch mallsapp
+mem session switch myanotherapp
 mem add "Migrated RDS from ap-southeast-1 to ap-southeast-2, snapshot copy completed"
 
 # Search across everything
@@ -56,7 +56,7 @@ mem recall "payment provider"
 mem recall "RDS migration"
 
 # Ask a question with full context
-mem ask "What payment provider does xyz app use?"
+mem ask "What payment provider does myanotherapp app use?"
 
 # Check status
 mem status
